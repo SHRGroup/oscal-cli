@@ -20,7 +20,10 @@ jobs:
           TARGET_REPO: shrgroup/oscal-cli
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
-      tobuild: ${{ steps.buildcheck.output.versions }}
+      tobuild: ${{ steps.buildcheck.output.build }}
+      target_name: ${{ steps.buildcheck.output.target_name }}
+      target_hash: ${{ steps.buildcheck.output.target_hash }}
+
   build:
     runs-on: ubuntu-latest
     needs: tobuildornot
@@ -55,5 +58,5 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ needs.tobuildornot.outputs.target_hash }},${{ needs.tobuildornot.outputs.target_name }}
+          tags: ${{ needs.tobuildornot.outputs.target_name }},${{ needs.tobuildornot.outputs.target_hash }}
           labels: ${{ steps.meta.outputs.labels }}
