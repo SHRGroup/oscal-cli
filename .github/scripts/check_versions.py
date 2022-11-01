@@ -21,8 +21,8 @@ tobuild = target_hash not in tags
 print(f"{tobuild} you need to build {target_name}->{target_hash}")
 output_file = os.environ.get('GITHUB_OUTPUT', 'tobuild.json')
 with open(output_file, 'a') as f:
-    f.write(f"build={tobuild}")
-    f.write(f"targetname={target_name.replace('v','')}")
-    f.write(f"targethash={target_hash}")
+    f.write(f"build={tobuild}\n")
+    f.write(f"targetname={target_name.replace('v','')}\n")
+    f.write(f"targethash={target_hash}\n")
 print(f"wrote to {output_file}")
 print(open(output_file).read())
