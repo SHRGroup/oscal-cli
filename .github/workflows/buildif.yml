@@ -21,8 +21,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       tobuild: ${{ steps.buildcheck.output.build }}
-      target_name: ${{ steps.buildcheck.output.target_name }}
-      target_hash: ${{ steps.buildcheck.output.target_hash }}
+      targetname: ${{ steps.buildcheck.output.targetname }}
+      targethash: ${{ steps.buildcheck.output.targethash }}
 
   build:
     runs-on: ubuntu-latest
@@ -53,16 +53,16 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=branch
-            ${{ needs.tobuildornot.outputs.target_name }}
-            ${{ needs.tobuildornot.outputs.target_hash }}
-      - run: echo ${{ needs.tobuildornot.outputs.target_name }}
+            ${{ needs.tobuildornot.outputs.targetname }}
+            ${{ needs.tobuildornot.outputs.targethash }}
+      - run: echo ${{ needs.tobuildornot.outputs.targetname }}
 
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
         with:
           context: .
-          build-args: RELEASE="${{ needs.tobuildornot.outputs.target_name }}"
+          build-args: RELEASE=${{ needs.tobuildornot.outputs.targetname }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
