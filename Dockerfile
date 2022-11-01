@@ -2,7 +2,7 @@
 ## Matching current version on Iron Bank
 FROM bitnami/git:2.35.2 AS fetcher
 ARG RELEASE=0.3.0
-RUN git clone --recurse-submodules -b ${RELEASENUM} https://github.com/usnistgov/oscal-cli.git  /oscal-cli/
+RUN git clone --recurse-submodules -b v${RELEASENUM} https://github.com/usnistgov/oscal-cli.git  /oscal-cli/
 
 ## Matching current version on Iron Bank
 FROM maven:3.8.5-openjdk-17 AS builder
