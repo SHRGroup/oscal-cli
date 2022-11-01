@@ -1,5 +1,9 @@
 name: Build Latest Version
 
+on:
+  push:
+    branches: [ "main" ]
+
 jobs:
   update:
     runs-on: ubuntu-latest
