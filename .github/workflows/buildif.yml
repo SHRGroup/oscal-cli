@@ -26,6 +26,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     needs: tobuildornot
     if: ${{needs.tobuildornot.outputs.tobuild}} == 'True'
     env:
@@ -55,7 +58,7 @@ jobs:
             ${{ needs.tobuildornot.outputs.target_name }}
             ${{ needs.tobuildornot.outputs.target_hash }}
       - run: echo "${{ steps.meta.outputs.tags }}"
-      - run: echo "${{ steps.meta.outputs.labels }}"
+      - run: echo "${{ secrets.GITHUB_TOKEN }}"
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
