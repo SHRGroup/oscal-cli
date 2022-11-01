@@ -5,10 +5,14 @@ on:
     branches: [ "main" ]
   schedule:
     - cron: "* 1 * * *"
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   tobuildornot:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -35,9 +39,7 @@ jobs:
       packages: write
     needs: tobuildornot
     if: ${{needs.tobuildornot.outputs.tobuild}} == 'True'
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -58,9 +60,9 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            ${{ needs.tobuildornot.outputs.target_name }}
-            ${{ needs.tobuildornot.outputs.target_hash }}
+          # tags: |
+          #   ${{ needs.tobuildornot.outputs.target_name }}
+          #   ${{ needs.tobuildornot.outputs.target_hash }}
 
       - name: Build and push Docker image
         id: build-and-push
