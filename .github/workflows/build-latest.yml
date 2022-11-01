@@ -14,7 +14,7 @@ jobs:
           repository: usnistgov/oscal-cli
       - id: ocliver
         if: success() || failure()
-        run: echo "release=${ ${{ steps.ocliver.outputs.release }}:=v0.0.0 }" >> $GITHUB_OUTPUT
+        run: VAR=${{ steps.ocliver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
 
       - id: myver-query
         uses: pozetroninc/github-action-get-latest-release@master
@@ -22,7 +22,7 @@ jobs:
           repository: ${{ github.repository }}
       - id: myver
         if: success() || failure()
-        run: echo "release=${ ${{ steps.myver.outputs.release }}:=v0.0.0 }" >> $GITHUB_OUTPUT
+        run: VAR=${{ steps.myver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
 
       - name: print versions
         run: echo "${{ steps.myver.outputs.release }} <> ${{ steps.ocliver.outputs.release }}"
