@@ -3,10 +3,9 @@ import os
 from github import Github
 print(os.environ)
 token = os.environ.get('GITHUB_TOKEN',False)
-token_enc = token
 if not token:
     token = open('.accesstoken').read()
-    token_enc = token.encode('ascii')
+token_enc = token.encode('ascii')
 g = Github(token)
 nist = g.get_repo(os.environ.get('SOURCE_REPO', "usnistgov/oscal-cli"))
 nist_tags = nist.get_tags()
