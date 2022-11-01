@@ -1,6 +1,7 @@
 import os
 
 from github import Github
+print(os.environ)
 token = os.environ.get('GITHUB_TOKEN',False)
 token_enc = token
 if not token:
