@@ -20,9 +20,9 @@ jobs:
           TARGET_REPO: shrgroup/oscal-cli
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
-      tobuild: ${{ steps.buildcheck.output.build }}
-      targetname: ${{ steps.buildcheck.output.targetname }}
-      targethash: ${{ steps.buildcheck.output.targethash }}
+      tobuild: ${{ steps.buildcheck.outputs.build }}
+      targetname: ${{ steps.buildcheck.outputs.targetname }}
+      targethash: ${{ steps.buildcheck.outputs.targethash }}
 
   build:
     runs-on: ubuntu-latest
