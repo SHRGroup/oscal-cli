@@ -8,14 +8,26 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - id: ocliver
+      - id: ocliver-query
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: usnistgov/oscal-cli
-      - id: myver
+      - id: ocliver
+        if: success() || failure()
+        run: echo "release=${ ${{ steps.ocliver.outputs.release }}:=v0.0.0 } >> $GITHUB_OUTPUT
+
+      - id: myver-query
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: ${{ github.repository }}
+      - id: myver
+        if: success() || failure()
+        run: echo "release=${ ${{ steps.myver.outputs.release }}:=v0.0.0 } >> $GITHUB_OUTPUT
+
+      - name: print versions
+        run: echo "${{ steps.myver.outputs.release }} <> ${{ steps.ocliver.outputs.release }}"
+
+
       # - id: ocliver
       #   name: remote version
       #   run:  curl --silent -L https://api.github.com/repos/usnistgov/oscal-cli/git/refs/tags | jq -S '[ .[] | .ref | capture("refs/tags/(?<ver>.*)")|.ver] | .[-1]' | xargs -I% echo "version=%" >> $GITHUB_OUTPUT
