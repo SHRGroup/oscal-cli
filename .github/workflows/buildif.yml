@@ -1,5 +1,9 @@
 name: Build Info
 
+on:
+  push:
+    branches: [ "main" ]
+
 jobs:
   tobuildornot:
     runs-on: ubuntu-latest
