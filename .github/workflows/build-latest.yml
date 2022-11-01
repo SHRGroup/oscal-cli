@@ -8,21 +8,29 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - id: ocliver-query
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: usnistgov/oscal-cli
-      - id: ocliver
-        if: success() || failure()
-        run: VAR=${{ steps.ocliver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
+      # - id: ocliver-query
+      #   uses: pozetroninc/github-action-get-latest-release@master
+      #   with:
+      #     repository: usnistgov/oscal-cli
+      # - id: ocliver
+      #   if: success() || failure()
+      #   run: VAR=${{ steps.ocliver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
 
-      - id: myver-query
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: ${{ github.repository }}
+      # - id: myver-query
+      #   uses: pozetroninc/github-action-get-latest-release@master
+      #   with:
+      #     repository: ${{ github.repository }}
+      # - id: myver
+      #   if: success() || failure()
+      #   run: VAR=${{ steps.myver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
+
+      - id: ocliver
+        name: remote version
+        run:  VAR=$(curl --silent -L https://api.github.com/repos/usnistgov/oscal-cli/git/refs/tags | jq -S '[ .[] | .ref | capture("refs/tags/(?<ver>.*)")|.ver] | .[-1]') echo "release=${VAR:=v0.0.0}" >> $GITHUB_OUTPUT
+
       - id: myver
-        if: success() || failure()
-        run: VAR=${{ steps.myver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
+        name: remote version
+        run:  VAR=$(curl --silent -L https://api.github.com/repos/${{ github.repository }}/git/refs/tags | jq -S '[ .[] | .ref | capture("refs/tags/(?<ver>.*)")|.ver] | .[-1]') echo "release=${VAR:=v0.0.0}" >> $GITHUB_OUTPUT
 
       - name: print versions
         if: success() || failure()
@@ -31,7 +39,7 @@ jobs:
 
       # - id: ocliver
       #   name: remote version
-      #   run:  curl --silent -L https://api.github.com/repos/usnistgov/oscal-cli/git/refs/tags | jq -S '[ .[] | .ref | capture("refs/tags/(?<ver>.*)")|.ver] | .[-1]' | xargs -I% echo "version=%" >> $GITHUB_OUTPUT
+      #   run:  VAR=$(curl --silent -L https://api.github.com/repos/usnistgov/oscal-cli/git/refs/tags | jq -S '[ .[] | .ref | capture("refs/tags/(?<ver>.*)")|.ver] | .[-1]') echo "release=${VAR:=v0.0.0}" >> $GITHUB_OUTPUT
       
       - name: Checkout repository
         uses: actions/checkout@v3
