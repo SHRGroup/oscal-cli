@@ -19,7 +19,10 @@ tags = requests.get(f'https://ghcr.io/v2/{repo}/tags/list', headers=headers).jso
 tags = [t for t in tags if not t.endswith('.sig')]
 tobuild = target_hash not in tags
 print(f"{tobuild} you need to build {target_name}->{target_hash}")
-with open(os.environ.get('GITHUB_OUTPUT', 'tobuild.json'), 'a') as f:
+output_file = os.environ.get('GITHUB_OUTPUT', 'tobuild.json')
+with open(output_file, 'a') as f:
     f.write(f"build={tobuild}")
     f.write(f"targetname={target_name.replace('v','')}")
     f.write(f"targethash={target_hash}")
+print(f"wrote to {output_file}")
+print(open(output_file).read())
