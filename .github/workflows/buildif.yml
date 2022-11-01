@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: tobuildornot
-    if: needs.tobuildornot.outputs.tobuild == 'True'
+    if: ${{needs.tobuildornot.outputs.tobuild}} == 'True'
     env:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
