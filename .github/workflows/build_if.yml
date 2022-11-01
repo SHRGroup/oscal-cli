@@ -34,9 +34,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    # permissions:
+    #   contents: read
+    #   packages: write
     needs: tobuildornot
     if: ${{needs.tobuildornot.outputs.tobuild}} == 'True'
 
@@ -60,9 +60,9 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # tags: |
-          #   ${{ needs.tobuildornot.outputs.target_name }}
-          #   ${{ needs.tobuildornot.outputs.target_hash }}
+          tags: |
+            ${{ needs.tobuildornot.outputs.target_name }}
+            ${{ needs.tobuildornot.outputs.target_hash }}
       - run: echo "${{ steps.meta.outputs.tags }}"
       - name: Build and push Docker image
         id: build-and-push
