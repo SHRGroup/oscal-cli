@@ -13,7 +13,7 @@ jobs:
       - name: Should I build?
         id: buildcheck
         run: |
-          pip install github requests && \
+          pip install pygithub requests && \
           python3 .github/scripts/check_versions.py
         env:
           SOURCE_REPO: usnistgov/oscal-cli
