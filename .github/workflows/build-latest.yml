@@ -25,6 +25,7 @@ jobs:
         run: VAR=${{ steps.myver-query.outputs.release }} echo "release=${VAR:=v0.0.0 }" >> $GITHUB_OUTPUT
 
       - name: print versions
+        if: success() || failure()
         run: echo "${{ steps.myver.outputs.release }} <> ${{ steps.ocliver.outputs.release }}"
 
 
