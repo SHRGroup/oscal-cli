@@ -32,6 +32,11 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_NAME: ${{ github.repository }}
     steps:
+      - run: echo ${{ needs.tobuildornot.outputs.tobuild }}
+      - run: echo ${{ needs.tobuildornot.outputs.targetname }}
+      - run: echo ${{ needs.tobuildornot.outputs.targethash }}
+      - run: echo ${{ needs.tobuildornot.outputs }}
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -55,7 +60,6 @@ jobs:
             type=ref,event=branch
             ${{ needs.tobuildornot.outputs.targetname }}
             ${{ needs.tobuildornot.outputs.targethash }}
-      - run: echo ${{ needs.tobuildornot.outputs.targetname }}
 
       - name: Build and push Docker image
         id: build-and-push
