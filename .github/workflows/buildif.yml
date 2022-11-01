@@ -52,7 +52,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
             ${{ needs.tobuildornot.outputs.target_name }}
             ${{ needs.tobuildornot.outputs.target_hash }}
       - run: echo ${{ steps.meta.outputs.tags }}
