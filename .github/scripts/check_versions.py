@@ -21,5 +21,5 @@ tobuild = target_hash not in tags
 print(f"{tobuild} you need to build {target_name}->{target_hash}")
 with open(os.environ.get('GITHUB_OUTPUT', 'tobuild.json'), 'a') as f:
     f.write(f"build={tobuild}")
-    f.write(f"target_name={target_name}")
+    f.write(f"target_name={target_name.replace('v','')}")
     f.write(f"target_hash={target_hash}")
