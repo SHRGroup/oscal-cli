@@ -1,7 +1,6 @@
 import os
 
 from github import Github
-print(os.environ)
 token = os.environ.get('GITHUB_TOKEN',False)
 if not token:
     token = open('.accesstoken').read()
@@ -23,6 +22,6 @@ if target_hash not in tags:
     output=dict(name=target_name, hash=target_hash)
 else:
     output = {}
-# with open(os.environ.get('TARGET_REPO', 'tobuild.json'), 'w') as f:
-#     f.write(f"versions=\"{json.dumps(output)}\"")
-print(f"::set-output name=versions::{json.dumps(output)}")
+print(output)
+with open(os.environ.get('GITHUB_OUTPUT', 'tobuild.json'), 'a') as f:
+    f.write(f"versions=\"{json.dumps(output)}\"")
