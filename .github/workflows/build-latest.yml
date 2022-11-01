@@ -1,0 +1,46 @@
+name: Build Latest Version
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - id: ocliver
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: usnistgov/oscal-cli
+      - id: myver
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: ${{ github.repository }}
+      # - id: ocliver
+      #   name: remote version
+      #   run:  curl --silent -L https://api.github.com/repos/usnistgov/oscal-cli/git/refs/tags | jq -S '[ .[] | .ref | capture("refs/tags/(?<ver>.*)")|.ver] | .[-1]' | xargs -I% echo "version=%" >> $GITHUB_OUTPUT
+      
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.ocliver.outputs.release }},
+          labels: ${{ steps.meta.outputs.labels }}
