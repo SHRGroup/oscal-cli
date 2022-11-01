@@ -3,6 +3,8 @@ name: Build Info
 on:
   push:
     branches: [ "main" ]
+  schedule:
+    - cron: "* 1 * * *"
 
 jobs:
   tobuildornot:
@@ -10,6 +12,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
       - name: Should I build?
         id: buildcheck
         run: |
@@ -19,6 +22,7 @@ jobs:
           SOURCE_REPO: usnistgov/oscal-cli
           TARGET_REPO: shrgroup/oscal-cli
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
     outputs:
       tobuild: ${{ steps.buildcheck.outputs.build }}
       target_name: ${{ steps.buildcheck.outputs.target_name }}
@@ -57,8 +61,7 @@ jobs:
           tags: |
             ${{ needs.tobuildornot.outputs.target_name }}
             ${{ needs.tobuildornot.outputs.target_hash }}
-      - run: echo "${{ steps.meta.outputs.tags }}"
-      - run: echo "${{ secrets.GITHUB_TOKEN }}"
+
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
