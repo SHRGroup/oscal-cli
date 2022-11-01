@@ -17,7 +17,7 @@ headers = {"Authorization": f"Bearer {base64.b64encode(token_enc).decode('ascii'
 repo = os.environ.get('TARGET_REPO', "shrgroup/oscal-cli")
 tags = requests.get(f'https://ghcr.io/v2/{repo}/tags/list', headers=headers).json().get('tags')
 tags = [t for t in tags if not t.endswith('.sig')]
-print(output)
+print(f"you need to build {target_name}->{target_hash}")
 with open(os.environ.get('GITHUB_OUTPUT', 'tobuild.json'), 'a') as f:
     f.write(f"build={str(target_hash not in tags)}")
     f.write(f"target_name={target_name}")
