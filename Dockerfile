@@ -13,7 +13,7 @@ RUN mvn install
 ## Chose GCR as google also contributes a java image to Iron Bank
 FROM gcr.io/distroless/java11-debian11
 ARG RELEASE=v0.3.0
-RUN export RELEASENUM=TEST 
+RUN RELEASENUM=TEST 
 RUN env
 COPY --from=builder /oscal-cli/cli-core/target/cli-core-${RELEASENUM}-oscal-cli/lib/* /usr/lib/oscal-cli/
 COPY --from=builder /oscal-cli/cli-core/target/cli-core-${RELEASENUM}-oscal-cli/bin/oscal-cli /usr/bin/oscal-cli
