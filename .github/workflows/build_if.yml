@@ -1,0 +1,82 @@
+name: Build Info
+
+on:
+  push:
+    branches: [ "main" ]
+  schedule:
+    - cron: "* 1 * * *"
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  tobuildornot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Should I build?
+        id: buildcheck
+        run: |
+          pip install pygithub requests && \
+          python3 .github/scripts/check_versions.py
+        env:
+          SOURCE_REPO: usnistgov/oscal-cli
+          TARGET_REPO: shrgroup/oscal-cli
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+    outputs:
+      tobuild: ${{ steps.buildcheck.outputs.build }}
+      target_name: ${{ steps.buildcheck.outputs.target_name }}
+      target_hash: ${{ steps.buildcheck.outputs.target_hash }}
+
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    needs: tobuildornot
+    if: ${{needs.tobuildornot.outputs.tobuild}} == 'True'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@7e0881f8fe90b25e305bbf0309761e9314607e25
+        with:
+          cosign-release: 'v1.9.0'
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@79abd3f86f79a9d68a23c75a09a9a85889262adf
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            ${{ needs.tobuildornot.outputs.target_name }}
+            ${{ needs.tobuildornot.outputs.target_hash }}
+      - run: echo "${{ steps.meta.outputs.tags }}"
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          build-args: RELEASE=${{ needs.tobuildornot.outputs.target_name }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
