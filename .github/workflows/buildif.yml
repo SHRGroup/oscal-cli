@@ -48,9 +48,13 @@ jobs:
 
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            ${{ needs.tobuildornot.outputs.target_name }}
+            ${{ needs.tobuildornot.outputs.target_hash }}
 
       - name: Build and push Docker image
         id: build-and-push
@@ -58,5 +62,5 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ needs.tobuildornot.outputs.target_name }},${{ needs.tobuildornot.outputs.target_hash }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
