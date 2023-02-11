@@ -17,7 +17,7 @@ jobs:
       - name: Cleanup - Delete Untagged
         uses: camargo/delete-untagged-action@v1
         with:
-          super_secret: ${{ secrets.PAT }}
+          github-token: ${{ secrets.PAT }}
 
       - name: Checkout repository
         uses: actions/checkout@v3
