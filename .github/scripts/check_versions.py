@@ -11,7 +11,7 @@ nist_tags = nist.get_tags()
 releases = {t.name:t.commit.sha for t in list(nist_tags)}
 print(f"upstream has: {releases}")
 target_name = max(releases.keys())
-print(f"Latest is: {target_name}"
+print(f"Latest is: {target_name}")
 target_hash = releases.get(target_name)
 
 import requests, base64
